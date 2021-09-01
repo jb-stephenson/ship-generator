@@ -1,0 +1,11 @@
+1-15:None
+16-30:1d4 gp per crew
+31-45:1d6 gp per crew
+46-55:1d8 gp per crew
+56-65:1d10 gp per crew
+66-75:1d12 gp per crew
+76-80:1d6 gp per crew plus 250 gp of treasure items
+81-85:1d6 gp per crew plus 500 gp of treasure items
+86-92:1d6 gp per crew plus 1d4 items from Magic Item Table A
+93-98:1d6 gp per crew plus 1d4 items from Magic Item Table B
+99-100:1d6 gp per crew plus 1d4 items from Magic Item Table C

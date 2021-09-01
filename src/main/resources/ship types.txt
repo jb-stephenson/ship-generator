@@ -1,0 +1,6 @@
+1-17:Caravel
+18-35:Coaster
+36-53:Keelboat
+54-71:Longship
+72-89:Sailing Ship
+90-100:Warship

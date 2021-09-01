@@ -1,15 +1,20 @@
 package com.example.randomshipgeneratormodel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 
-import java.beans.Transient;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 import java.util.Random;
+
+import static com.example.randomshipgeneratormodel.PropertiesLoader.loadProperties;
 
 public class Ship {
 
@@ -24,8 +29,18 @@ public class Ship {
     @JsonIgnore
     private Random random;
 
+    @JsonIgnore
+    private Properties configuration;
+
     public Ship() {
         this.random = new Random();
+
+        try {
+            this.configuration = loadProperties("application.properties");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         this.generateShip();
     }
 
@@ -52,50 +67,9 @@ public class Ship {
     }
 
     public void generatePrefix() {
-        HashMap<Integer, String> prefixes = generateStruct("prefixes.txt");
         int randPrefix = this.getRandom().nextInt(100)+1;
-        String prefix = prefixes.get(randPrefix);
+        String prefix = configuration.getProperty("p" + randPrefix);
         this.setPrefix(prefix);
-    }
-
-    public static HashMap<Integer, String> generateStruct(String fileName){
-        HashMap<Integer, String> mappings = new HashMap<>();
-
-        try{
-            File resource = new ClassPathResource(fileName).getFile();
-            //String text = new String(Files.readAllBytes(resource.toPath()));
-            List<String> lines = Files.readAllLines(resource.toPath(), StandardCharsets.UTF_8);
-
-            for(String line: lines){
-                int startVal=0;
-                int endVal=0;
-                if(line.contains("-")){ //value is possible over a range
-                    String range = line.substring(0, line.indexOf(":"));
-                    String start = range.substring(0, range.indexOf("-"));
-                    startVal = Integer.parseInt(start);
-                    String end = range.substring(range.indexOf("-")+1);
-                    endVal = Integer.parseInt(end);
-
-                    //get connected value
-                    String value = line.substring(line.indexOf(":")+1);
-
-                    for(int i=startVal; i < endVal+1; i++){
-                        mappings.put(i, value);
-                    }
-                }
-                else{ //value is possible for only 1 number
-                    String start = line.substring(0,line.indexOf(":"));
-                    startVal = Integer.parseInt(start);
-                    String value = line.substring(line.indexOf(":")+1);
-                    mappings.put(startVal, value);
-                }
-            }
-
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-
-        return mappings;
     }
 
     public String getSuffix() {
@@ -107,9 +81,8 @@ public class Ship {
     }
 
     public void generateSuffix(){
-        HashMap<Integer, String> prefixes = generateStruct("suffixes.txt");
         int randSuffix = this.getRandom().nextInt(100)+1;
-        String suffix = prefixes.get(randSuffix);
+        String suffix = configuration.getProperty("s" + randSuffix);
         this.setSuffix(suffix);
     }
 
@@ -122,9 +95,8 @@ public class Ship {
     }
 
     public void generateShipType(){
-        HashMap<Integer, String> shipTypes = generateStruct("ship types.txt");
         int randShipType = this.getRandom().nextInt(100)+1;
-        String shipType = shipTypes.get(randShipType);
+        String shipType = configuration.getProperty("st" + randShipType);
         this.setShipType(shipType);
     }
 
@@ -137,9 +109,8 @@ public class Ship {
     }
 
     public void generateShipFunction(){
-        HashMap<Integer, String> shipFunctions = generateStruct("ship functions.txt");
         int randShipFunction = this.getRandom().nextInt(100)+1;
-        String shipFunction = shipFunctions.get(randShipFunction);
+        String shipFunction = configuration.getProperty("sf" + randShipFunction);
         this.setShipFunction(shipFunction);
     }
 
@@ -152,9 +123,8 @@ public class Ship {
     }
 
     public void generateShipCrew(){
-        HashMap<Integer, String> shipCrews = generateStruct("ship crews.txt");
         int randShipCrew = this.getRandom().nextInt(100)+1;
-        String shipCrew = shipCrews.get(randShipCrew);
+        String shipCrew = configuration.getProperty("sc" + randShipCrew);
         this.setShipCrew(shipCrew);
     }
 
@@ -167,9 +137,8 @@ public class Ship {
     }
 
     public void generateTreasure(){
-        HashMap<Integer, String> treasures = generateStruct("treasures.txt");
         int randTreasure = this.getRandom().nextInt(100)+1;
-        String treasure = treasures.get(randTreasure);
+        String treasure = configuration.getProperty("t" + randTreasure);
         this.setTreasure(treasure);
     }
 
@@ -183,7 +152,6 @@ public class Ship {
 
     public void generateWeaponry(String shipType) {
         int numWeapons = 0;
-        HashMap<Integer, String> weapons = generateStruct("weapons.txt");
 
         if(shipType.equals("Coaster")) {
             numWeapons = 1;
@@ -198,7 +166,7 @@ public class Ship {
         int ballista = 0, cannon = 0, mangonel = 0, ram = 0, scorpio = 0, sideShears = 0;
         for(int i=0; i<numWeapons; i++){
             int randWeapon = this.getRandom().nextInt(100)+1;
-            String weapon = weapons.get(randWeapon);
+            String weapon = configuration.getProperty("w" + randWeapon);
 
             switch(weapon) {
                 case "ballista": ballista++;
@@ -226,7 +194,7 @@ public class Ship {
         this.setWeaponry(result);
     }
 
-    public String toString(){
+    public String toString() {
         String result = "\nThe ";
         String prefix = this.getPrefix();
         String suffix = this.getSuffix();
@@ -244,5 +212,18 @@ public class Ship {
                 "\nWeaponry: " + weaponry +
                 "\n--------------------";
         return result;
+    }
+}
+
+class PropertiesLoader {
+
+    public static Properties loadProperties(String resourceFileName) throws IOException, IOException {
+        Properties configuration = new Properties();
+        InputStream inputStream = PropertiesLoader.class
+                .getClassLoader()
+                .getResourceAsStream(resourceFileName);
+        configuration.load(inputStream);
+        inputStream.close();
+        return configuration;
     }
 }

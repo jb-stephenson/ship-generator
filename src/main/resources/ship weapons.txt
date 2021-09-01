@@ -1,6 +1,0 @@
-1-30:ballista
-31-35:cannon
-36-45:mangonel
-46-60:ram
-61-80:scorpio
-81-100:side-shears

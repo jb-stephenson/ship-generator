@@ -16,6 +16,7 @@ public class ShipController {
         response.addHeader("Access-Control-Allow-Origin", "*");
         response.addHeader("Access-Control-Allow-Methods", "GET");
         Ship ship = new Ship();
+        System.out.println(ship.toString());
         return ship;
     }
 }

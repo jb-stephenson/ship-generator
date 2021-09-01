@@ -1,4 +1,0 @@
-1-25:Merchant
-26-50:Naval
-51-75:Pirate
-76-100:Trade

@@ -153,14 +153,21 @@ public class Ship {
     public void generateWeaponry(String shipType) {
         int numWeapons = 0;
 
-        if(shipType.equals("Coaster")) {
-            numWeapons = 1;
-        } else if(shipType.equals("Keelboat") || shipType.equals("Longship")) {
-            numWeapons = 2;
-        } else if(shipType.equals("Caravel") || shipType.equals("Sailing Ship")) {
-            numWeapons = 3;
-        } else if(shipType.equals("Warship")) {
-            numWeapons = 10;
+        switch (shipType) {
+            case "Coaster":
+                numWeapons = 1;
+                break;
+            case "Keelboat":
+            case "Longship":
+                numWeapons = 2;
+                break;
+            case "Caravel":
+            case "Sailing Ship":
+                numWeapons = 3;
+                break;
+            case "Warship":
+                numWeapons = 10;
+                break;
         }
 
         int ballista = 0, cannon = 0, mangonel = 0, ram = 0, scorpio = 0, sideShears = 0;
@@ -179,17 +186,26 @@ public class Ship {
                     break;
                 case "scorpio": scorpio++;
                     break;
-                case "side shears": sideShears++;
+                case "side-shears": sideShears++;
                     break;
             }
         }
 
-        String result = (ballista == 0) ? "" : (ballista + " ballista ");
-        result += (cannon == 0) ? "" : (cannon + " cannon ");
-        result += (mangonel == 0) ? "" : (mangonel + " mangonel ");
-        result += (ram == 0) ? "" : (ram + " ram ");
-        result += (scorpio == 0) ? "" : (scorpio + " scorpio ");
-        result += (sideShears == 0) ? "" : (sideShears + " side-shears");
+        String result = "";
+        if(ballista > 0)
+            result += ballista + ((ballista > 1) ? " ballistas, " : " ballista, ");
+        if(cannon > 0)
+            result += cannon + ((cannon > 1) ? " cannons, " : " cannon, ");
+        if(mangonel > 0)
+            result += mangonel + ((mangonel > 1) ? " mangonels, " : " mangonel, ");
+        if(ram > 0)
+            result += ram + ((ram > 1) ? " rams, " : " ram, ");
+        if(scorpio > 0)
+            result += scorpio + ((scorpio > 1) ? " scorpios, " : " scorpio, ");
+        if(sideShears > 0)
+            result += sideShears + ((sideShears > 1) ? " side-shears, " : " side-shear, ");
+
+        result = result.substring(0, result.length() - 2);
 
         this.setWeaponry(result);
     }
@@ -217,7 +233,7 @@ public class Ship {
 
 class PropertiesLoader {
 
-    public static Properties loadProperties(String resourceFileName) throws IOException, IOException {
+    public static Properties loadProperties(String resourceFileName) throws IOException {
         Properties configuration = new Properties();
         InputStream inputStream = PropertiesLoader.class
                 .getClassLoader()
